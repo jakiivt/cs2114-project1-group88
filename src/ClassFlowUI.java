@@ -2,11 +2,21 @@ package classFlow;
 import java.util.Scanner;
 import java.time.LocalDate;
 
+/*
+ *  Responsible for taking user input and passing it to the AssignmentManager
+ * 
+ *  @author Jack Jones
+ *  setters created with the assistance of AI
+ *  @version Sep 24, 2026
+ */
 public class ClassFlowUI
 {
     private AssignmentManager manager;
- 
-    
+
+    /*
+     * Create a new ClassFlowUI object.
+     * @param manager
+     */
     public ClassFlowUI(AssignmentManager manager)
     {
         this.manager = manager;
@@ -101,65 +111,318 @@ public class ClassFlowUI
     /*
      * All of these setter inputs will input course code and assignment name
      * to find correct assignment reference before passing data to Assignment
-     * Manager. Searches by using taking user input course code to find course
-     * object and then user inputs an assignment name to identify an assignment
-     * in said course using the assignmentTracker Hashmap.
+     * Manager
      */
         
     /*
      * Gets input for creating courses and passes it AssignmentManager
      */
     public void addCourseInput() {
-        
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Course name: ");
+        String courseName = scanner.nextLine();
+
+        System.out.print("Course code: ");
+        String courseCode = scanner.nextLine();
+
+        System.out.print("Instructor: ");
+        String instructor = scanner.nextLine();
+
+        try {
+            manager.addCourse(courseName, courseCode, instructor);
+            System.out.println("Course added successfully.");
+        }
+        catch (IllegalArgumentException e) {
+            showError(e.getMessage());
+        }
     }
-    
+
+
     /*
      * Gets input for removing courses and passes it AssignmentManager
      */
     public void removeCourseInput() {
-        
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Course code: ");
+        String courseCode = scanner.nextLine();
+
+        try {
+            boolean removed = manager.removeCourse(courseCode);
+
+            if (removed) {
+                System.out.println("Course removed successfully.");
+            }
+            else {
+                System.out.println("Course does not exist.");
+            }
+        }
+        catch (IllegalArgumentException e) {
+            showError(e.getMessage());
+        }
     }
-    
+
+
     /*
      * Gets input for setting due date and passes it AssignmentManager
      */
     public void setDueDateInput() {
-        
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Course code: ");
+        String courseCode = scanner.nextLine();
+
+        System.out.print("Assignment name: ");
+        String assignmentName = scanner.nextLine();
+
+        try {
+            Course course = (Course)AssignmentManager.courseTracker.get(courseCode);
+
+            if (course == null) {
+                throw new IllegalArgumentException(
+                    courseCode + " does not exist!"
+                );
+            }
+
+            Assignment assignment =
+                course.assignmentTracker.get(assignmentName);
+
+            if (assignment == null) {
+                throw new IllegalArgumentException(
+                    assignmentName + " does not exist in " + courseCode
+                );
+            }
+
+            System.out.print("New due date (YYYY-MM-DD): ");
+            String dateInput = scanner.nextLine();
+
+            LocalDate newDueDate = LocalDate.parse(dateInput);
+
+            manager.setDueDate(assignment, newDueDate);
+
+            System.out.println("Due date updated successfully.");
+        }
+        catch (IllegalArgumentException e) {
+            showError(e.getMessage());
+        }
     }
-    
+
+
     /*
      * Gets input for setting score and passes it AssignmentManager
      */
     public void setScoreInput() {
-        
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Course code: ");
+        String courseCode = scanner.nextLine();
+
+        System.out.print("Assignment name: ");
+        String assignmentName = scanner.nextLine();
+
+        try {
+            Course course = (Course)AssignmentManager.courseTracker.get(courseCode);
+
+            if (course == null) {
+                throw new IllegalArgumentException(
+                    courseCode + " does not exist!"
+                );
+            }
+
+            Assignment assignment =
+                course.assignmentTracker.get(assignmentName);
+
+            if (assignment == null) {
+                throw new IllegalArgumentException(
+                    assignmentName + " does not exist in " + courseCode
+                );
+            }
+
+            System.out.print("New score: ");
+            double newScore = scanner.nextDouble();
+
+            manager.setScore(assignment, newScore);
+
+            System.out.println("Score updated successfully.");
+        }
+        catch (IllegalArgumentException e) {
+            showError(e.getMessage());
+        }
     }
-    
+
+
     /*
      * Gets input for setting points and passes it AssignmentManager
      */
     public void setPointsInput() {
-        
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Course code: ");
+        String courseCode = scanner.nextLine();
+
+        System.out.print("Assignment name: ");
+        String assignmentName = scanner.nextLine();
+
+        try {
+            Course course = (Course)AssignmentManager.courseTracker.get(courseCode);
+
+            if (course == null) {
+                throw new IllegalArgumentException(
+                    courseCode + " does not exist!"
+                );
+            }
+
+            Assignment assignment =
+                course.assignmentTracker.get(assignmentName);
+
+            if (assignment == null) {
+                throw new IllegalArgumentException(
+                    assignmentName + " does not exist in " + courseCode
+                );
+            }
+
+            System.out.print("New point value: ");
+            double newPoints = scanner.nextDouble();
+
+            manager.setPoints(assignment, newPoints);
+
+            System.out.println("Points updated successfully.");
+        }
+        catch (IllegalArgumentException e) {
+            showError(e.getMessage());
+        }
     }
-    
+
+
     /*
      * Gets input for setting assignment name and passes it AssignmentManager
      */
     public void setAssignmentName() {
-        
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Course code: ");
+        String courseCode = scanner.nextLine();
+
+        System.out.print("Current assignment name: ");
+        String assignmentName = scanner.nextLine();
+
+        try {
+            Course course = (Course)AssignmentManager.courseTracker.get(courseCode);
+
+            if (course == null) {
+                throw new IllegalArgumentException(
+                    courseCode + " does not exist!"
+                );
+            }
+
+            Assignment assignment =
+                course.assignmentTracker.get(assignmentName);
+
+            if (assignment == null) {
+                throw new IllegalArgumentException(
+                    assignmentName + " does not exist in " + courseCode
+                );
+            }
+
+            System.out.print("New assignment name: ");
+            String newName = scanner.nextLine();
+
+            manager.setName(assignment, newName);
+
+            System.out.println("Assignment name updated successfully.");
+        }
+        catch (IllegalArgumentException e) {
+            showError(e.getMessage());
+        }
     }
-    
+
+
     /*
      * Gets input for setting course code and passes it AssignmentManager
      */
     public void setCourseCode() {
-        
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Current course code: ");
+        String courseCode = scanner.nextLine();
+
+        System.out.print("Assignment name: ");
+        String assignmentName = scanner.nextLine();
+
+        try {
+            Course course = (Course)AssignmentManager.courseTracker.get(courseCode);
+
+            if (course == null) {
+                throw new IllegalArgumentException(
+                    courseCode + " does not exist!"
+                );
+            }
+
+            Assignment assignment =
+                course.assignmentTracker.get(assignmentName);
+
+            if (assignment == null) {
+                throw new IllegalArgumentException(
+                    assignmentName + " does not exist in " + courseCode
+                );
+            }
+
+            System.out.print("New course code: ");
+            String newCourseCode = scanner.nextLine();
+
+            manager.setCourseCode(assignment, newCourseCode);
+
+            System.out.println("Assignment moved successfully.");
+        }
+        catch (IllegalArgumentException e) {
+            showError(e.getMessage());
+        }
     }
-    
+
+
     /*
      * Gets input for setting assignment type and passes it AssignmentManager
      */
     public void setAssignmentType() {
-        
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Course code: ");
+        String courseCode = scanner.nextLine();
+
+        System.out.print("Assignment name: ");
+        String assignmentName = scanner.nextLine();
+
+        try {
+            Course course = (Course)AssignmentManager.courseTracker.get(courseCode);
+
+            if (course == null) {
+                throw new IllegalArgumentException(
+                    courseCode + " does not exist!"
+                );
+            }
+
+            Assignment assignment =
+                course.assignmentTracker.get(assignmentName);
+
+            if (assignment == null) {
+                throw new IllegalArgumentException(
+                    assignmentName + " does not exist in " + courseCode
+                );
+            }
+
+            System.out.print(
+                "New assignment type (quiz/exam/homework/project): "
+            );
+            String newType = scanner.nextLine();
+
+            manager.setAssignmentType(assignment, newType);
+
+            System.out.println("Assignment type updated successfully.");
+        }
+        catch (IllegalArgumentException e) {
+            showError(e.getMessage());
+        }
     }
     
     public void displayAllAssignments()

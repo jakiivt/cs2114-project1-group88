@@ -26,6 +26,7 @@ public class AssignmentManager{
      *                  code of course assignment is being added under
      *            
      * @return True if and assignment is added, false if not
+     * @throws IllegalArgumentException
      */
   //Name, type, points, score, dueDate, courseCode
     public boolean addAssignment(String name, 
@@ -101,18 +102,20 @@ public class AssignmentManager{
         //Gets course to add assignment to
         Course toAddAssignment = (Course)courseTracker.get(courseCode);
         //adds assignment to Course's assignment tracker
-        toAddAssignment.assignmentTracker.add(name, toAdd);
+        toAddAssignment.assignmentTracker.put(name, toAdd);
         return true;
     }
     /**
      * Removes an assignment from a course.
-     * @param assignment
+     * @param courseCode
      *              assignment to be removed
-     * @param courseName
+     * @param assignmentName
      *              name of course assignment is in
      * @return True if and assignment is removed, false if not
+     * @throws IllegalArgumentException
      */
-    public boolean removeAssignment(String courseCode, String assignmentName) {
+    public boolean removeAssignment(String assignmentName, String courseCode) 
+        throws IllegalArgumentException{
         if (courseCode == null) {
             
             throw new IllegalArgumentException("Course code cannot be null");
@@ -142,12 +145,15 @@ public class AssignmentManager{
     
     /**
      * Adds a new course to courseTracker.
-     * @param courseName, courseCode, instructor
+     * @param courseName
+     * @param courseCode
+     * @param instructor
      *            
      * @return true if added
+     * @throws IllegalArgumentException
      */
     public boolean addCourse(String courseName, 
-        String courseCode, String instructor){
+        String courseCode, String instructor) throws IllegalArgumentException{
         //checks for null input
         if (courseName == null) {
             
@@ -161,10 +167,10 @@ public class AssignmentManager{
             
             throw new IllegalArgumentException("Please enter intructor");
         } 
-        if (!(courseTracker.containsKey(courseCode))) {
+        if (courseTracker.containsKey(courseCode)) {
             
-            throw new IllegalArgumentException(courseCode + " does not"
-                + " exist!");
+            throw new IllegalArgumentException(courseCode + " already"
+                + " exists!");
         }
         
         Course toAdd = new Course(courseName, courseCode, instructor);
@@ -179,6 +185,7 @@ public class AssignmentManager{
      * @param courseCode
      *            
      * @return True if course is removed, false if course is not removed
+     * @throws IllegalArgumentException
      */
     public boolean removeCourse(String courseCode){
         //checks for null input
@@ -202,6 +209,7 @@ public class AssignmentManager{
      * @param assignment, newDueDate
      *            
      * @return true if altered, false if not altered
+     * @throws IllegalArgumentException
      */
     public boolean setDueDate(Object assignment, LocalDate newDueDate)
     throws IllegalArgumentException{
@@ -234,6 +242,7 @@ public class AssignmentManager{
      * @param assignment, score
      *            
      * @return true if set, false if not set
+     * @throws IllegalArgumentException
      */
     public boolean setScore(Object assignment, Double recievedScore)
     throws IllegalArgumentException{
@@ -270,6 +279,7 @@ public class AssignmentManager{
      * @param assignment, newPoints
      *            
      * @return true if altered, false if not altered
+     * @throws IllegalArgumentException
      */
     public boolean setPoints(Object assignment, Double newPoints)
     throws IllegalArgumentException{
@@ -307,6 +317,7 @@ public class AssignmentManager{
     * @param assignment, newName
     *            
     * @return true if set, false if not set
+    * @throws IllegalArgumentException
     */
     public boolean setName(Object assignment, String newName)
     throws IllegalArgumentException{
@@ -329,7 +340,7 @@ public class AssignmentManager{
         
         Assignment cast = (Assignment)assignment;
         String currCourseCode = cast.courseCode;
-        Course currCourse = courseTracker.get(currCourseCode);
+        Course currCourse = (Course)courseTracker.get(currCourseCode);
         //Checks for assignment with the same name 
         //(assumes HashMap implementation)
         if (currCourse.assignmentTracker.containsKey(newName)) {
@@ -349,6 +360,7 @@ public class AssignmentManager{
     * @param assignment, newName
     *            
     * @return true if set, false if not set
+    * @throws IllegalArgumentException
     */
     public boolean setCourseCode(Object assignment, String newCourseCode)
     throws IllegalArgumentException{                                            //
@@ -407,6 +419,7 @@ public class AssignmentManager{
      *              new Assignment Type
      *              
      * @return true if altered, false if not altered
+     * @throws IllegalArgumentException
      */
     public boolean setAssignmentType(Object assignment, 
         String newAssignmentType) throws IllegalArgumentException{
@@ -455,6 +468,7 @@ public class AssignmentManager{
      *              new Assignment Type
      *              
      * @return Returns assignment data in the form "name, course"
+     * @throws IllegalArgumentException
      */
     public ArrayList<Object> getAssignmentData(Object assignment) 
         throws IllegalArgumentException{
@@ -488,6 +502,7 @@ public class AssignmentManager{
      *              
      * @return returns an array of all assignment objects for the specified
      * course
+     * @throws IllegalArgumentException
      */
     public ArrayList<Assignment> getAssignmentList(Object course) 
         throws IllegalArgumentException{
