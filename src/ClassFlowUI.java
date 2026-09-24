@@ -96,7 +96,7 @@ public class ClassFlowUI
             
             try {
                 
-                manager.removeAssignment(name, courseCode);
+                removed = manager.removeAssignment(name, courseCode);
                 
             }
             catch (IllegalArgumentException e) {
