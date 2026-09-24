@@ -4,87 +4,173 @@ import java.time.LocalDate;
 
 // -------------------------------------------------------------------------
 /**
- *  Write a one-sentence summary of your class here.
- *  Follow it with additional details about its purpose, what abstraction
- *  it represents, and how to use it.
+ *  Primary driving class of classFlow. Includes all methods pertaining to the
+ *  creation and editing of assignments and courses.
  * 
- *  @author jack
- *  @version Sep 3, 2026
+ *  @author Jack Jones (jakii)
+ *  @version Sep 24, 2026
  */
 public class AssignmentManager{
     
-    HashMap<String, Object> courseTracker = new HashMap<>();
+    public static HashMap<String, Object> courseTracker = new HashMap<>();
     
  // Public methods ........................................................
     
     //-------------- Adders and Removers --------------//
     
     /**
-     * Adds an assignment to a course.
+     * Handles input from UI and adds assignments to courses
      * @param assignment
      *                  assignment to be added to a course
+     * @param courseCode
+     *                  code of course assignment is being added under
      *            
      * @return True if and assignment is added, false if not
      */
-    public boolean addAssignment(Object assignment, Object course) 
-        throws IllegalArgumentException{
-        //Handles input to add assignment to a course
-        if (assignment == null) {
-            
-            throw new IllegalArgumentException("Assignment");
-        }
+  //Name, type, points, score, dueDate, courseCode
+    public boolean addAssignment(String name, 
+                                Double points,
+                                Double score, 
+                                LocalDate dueDate, 
+                                String assignmentType, 
+                                String courseCode) 
+                                    throws IllegalArgumentException{
         
-        return false;
+        //name
+        if (name == null) {
+            
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        //Points
+        if (points == null) {
+            
+            throw new IllegalArgumentException("Points cannot be null");
+        }
+        if (points <= 0) {
+            
+            throw new IllegalArgumentException("Points must be greater than 0");
+        }
+        //Score
+        if (score == null) {
+            
+            throw new IllegalArgumentException("Score cannot be null");
+        }
+        if (score < 0) {
+            
+            throw new IllegalArgumentException("Score must be positive or 0");
+        }
+        //Due Date
+        if (dueDate == null) {
+            
+            throw new IllegalArgumentException("Due Date cannot be null");
+        }
+        //Assignment Type (restricted to quiz, exam, homework, and project)
+        if (assignmentType == null) {
+            
+            throw new IllegalArgumentException("Assignment type "
+                + "cannot be null");
+        }
+        if (!assignmentType.equalsIgnoreCase("quiz") &&
+            !assignmentType.equalsIgnoreCase("exam") &&
+            !assignmentType.equalsIgnoreCase("homework") &&
+            !assignmentType.equalsIgnoreCase("project")) {
+            
+            throw new IllegalArgumentException(
+                "Please enter a valid Assignment type. "
+                + "Valid assignment types:\n"
+                + "- quiz\n"
+                + "- exam\n"
+                + "- homework\n"
+                + "- project");
+        }
+        //Course Code
+        if (courseCode == null) {
+            
+            throw new IllegalArgumentException("Course code cannot be null");
+        }
+        if (!(courseTracker.containsKey(courseCode))) {
+            
+            throw new IllegalArgumentException(courseCode + "does not exist!");
+        }
+        Assignment toAdd = new Assignment(name, 
+                                        points, 
+                                        score, 
+                                        dueDate, 
+                                        assignmentType, 
+                                        courseCode);
+        //Gets course to add assignment to
+        Course toAddAssignment = (Course)courseTracker.get(courseCode);
+        //adds assignment to Course's assignment tracker
+        toAddAssignment.assignmentTracker.add(name, toAdd);
+        return true;
     }
     /**
      * Removes an assignment from a course.
-     * @param an assignment
-     *            
+     * @param assignment
+     *              assignment to be removed
+     * @param courseName
+     *              name of course assignment is in
      * @return True if and assignment is removed, false if not
      */
-    public boolean removeAssignment() {
-        return false;
+    public boolean removeAssignment(String courseCode, String assignmentName) {
+        if (courseCode == null) {
+            
+            throw new IllegalArgumentException("Course code cannot be null");
+        }
+        if (!(courseTracker.containsKey(courseCode))) {
+            
+            throw new IllegalArgumentException(courseCode + " does noe exist!");
+        }
+        
+        Course toRemoveAssignment = (Course)courseTracker.get(courseCode);
+        if (assignmentName == null) {
+            
+            throw new IllegalArgumentException("Assignment name "
+                                               + "cannot be null");
+        }
+        if (!(toRemoveAssignment.
+            assignmentTracker.
+            containsKey(assignmentName))) {
+            
+            throw new IllegalArgumentException(assignmentName 
+                                  + " does not exist in " + courseCode);
+        }
+        
+        toRemoveAssignment.assignmentTracker.remove(assignmentName);
+        return true;
     }
     
     /**
      * Adds a new course to courseTracker.
      * @param courseName, courseCode, instructor
      *            
-     * @return return "Course successfully added" if added
-     * return "please enter a course name" if courseName is null
-     * return "please enter course code" if courseCode is null
-     * return "please enter instructor" if instructor is null
-     * return "course already exists" if courseCode is contained in 
-     * courseTracker
+     * @return true if added
      */
-    
-                                                                                //Come back here during testing to try difference between throwing exception
-                                                                                //and returning message
     public boolean addCourse(String courseName, 
         String courseCode, String instructor){
         //checks for null input
-        if(courseName != null && courseCode != null && instructor != null) {
-            //checks if the course already exists
-            if(courseTracker.containsKey(courseCode)) {
-                return false;
-            }
-            Course toAdd = new Course(courseName, courseCode, instructor);
-            courseTracker.put(courseCode, toAdd);
-            return true;
-            
-        } else if (courseName == null) {
+        if (courseName == null) {
             
             throw new IllegalArgumentException("Please enter a course name");
-            
-        } else if (courseCode == null) {
+        } 
+        if (courseCode == null) {
             
             throw new IllegalArgumentException("Please enter course code") ;
-                
-        } else if (instructor == null) {
+        }
+        if (instructor == null) {
             
             throw new IllegalArgumentException("Please enter intructor");
+        } 
+        if (!(courseTracker.containsKey(courseCode))) {
+            
+            throw new IllegalArgumentException(courseCode + " does not"
+                + " exist!");
         }
-        return false;
+        
+        Course toAdd = new Course(courseName, courseCode, instructor);
+        courseTracker.put(courseCode, toAdd);
+        return true;
+
     }
     
     /**
@@ -117,13 +203,13 @@ public class AssignmentManager{
      *            
      * @return true if altered, false if not altered
      */
-    public boolean setDueDate(Object assignment, String newDueDate)
-    throws IllegalArgumentException{                                            //Store dueDate as string for now, convert to LocalDate if time allows
+    public boolean setDueDate(Object assignment, LocalDate newDueDate)
+    throws IllegalArgumentException{
         
         if(newDueDate == null) {
             
             throw new IllegalArgumentException(
-                "Please enter a valid due date");                               //define valid due dates later
+                "Please enter a valid due date");
         }
         if (assignment == null) {
             
@@ -149,15 +235,15 @@ public class AssignmentManager{
      *            
      * @return true if set, false if not set
      */
-    public boolean setScore(Object assignment, Double score)
+    public boolean setScore(Object assignment, Double recievedScore)
     throws IllegalArgumentException{
         
-        if(score == null) {
+        if(recievedScore == null) {
             
             throw new IllegalArgumentException(
                 "Please enter a score");
         }
-        if(score < 0) {
+        if(recievedScore < 0) {
             
             throw new IllegalArgumentException("Please enter a positive score");
         }
@@ -173,7 +259,7 @@ public class AssignmentManager{
         } 
         
         Assignment cast = (Assignment)assignment;
-        cast.recievedScore = score;
+        cast.score = recievedScore;
         return true;
             
     }
@@ -222,7 +308,7 @@ public class AssignmentManager{
     *            
     * @return true if set, false if not set
     */
-    public Assignment setName(Object assignment, String newName)
+    public boolean setName(Object assignment, String newName)
     throws IllegalArgumentException{
         
         if(newName == null) {
@@ -246,7 +332,7 @@ public class AssignmentManager{
         Course currCourse = courseTracker.get(currCourseCode);
         //Checks for assignment with the same name 
         //(assumes HashMap implementation)
-        if (currCourse.assignmentTracker.containsKey(newName)) {                //Revise if assignment list is implemented differently
+        if (currCourse.assignmentTracker.containsKey(newName)) {
             throw new IllegalArgumentException("There is already an"
                 + "Assignment in this course with the name " + newName);
         }
@@ -264,7 +350,7 @@ public class AssignmentManager{
     *            
     * @return true if set, false if not set
     */
-    public Assignment setCourseCode(Object assignment, String newCourseCode)
+    public boolean setCourseCode(Object assignment, String newCourseCode)
     throws IllegalArgumentException{                                            //
         
         if(newCourseCode == null) {
@@ -289,25 +375,23 @@ public class AssignmentManager{
         }
         
         Assignment cast = (Assignment)assignment;
-        String assignmentName = cast.name;
-        String currCourseCode = cast.courseCode;
-        Course currCourse = courseTracker.get(currCourseCode);
-        Course newCourse = courseTracker.get(newCourseCode);
+        String assignmentName = cast.getName();
+        String currCourseCode = cast.getCourseCode();
+        Course currCourse = (Course)courseTracker.get(currCourseCode);
+        Course newCourse = (Course)courseTracker.get(newCourseCode);
         
         // Check for duplicate assignments (Assumes HashMap assignment
         // tracker implementation)
         if (newCourse.assignmentTracker.containsKey(assignmentName)) {
             
             throw new IllegalArgumentException("An assignment with the name "
-                + cast.name + "already exists in course " + newCourseCode);
+                + cast.getName() + "already exists in course " + newCourseCode);
         }
-        
-        //newCourse.assignmentTracker.put(assignmentName, cast);
-        //currCourse.assignmentTracker.remove(assignmentName);
-        
+
+        cast.setNewCourseCode(newCourseCode);
         //adds the assignment to the new course and removes it from the old one
-        addAssignment(newCourse, cast);
-        removeAssignment(currCourse, cast);
+        newCourse.assignmentTracker.put(assignmentName, cast);
+        currCourse.assignmentTracker.remove(assignmentName);
         return true;
             
     }
@@ -342,10 +426,10 @@ public class AssignmentManager{
                 "Assignment must be of type Assignment");
                 
         } 
-        if(newAssignmentType.toLowerCase() != "quiz" &&
-            newAssignmentType.toLowerCase() != "exam" &&
-            newAssignmentType.toLowerCase() != "homework" &&
-            newAssignmentType.toLowerCase() != "project") {
+        if(!newAssignmentType.equalsIgnoreCase("quiz") &&
+            !newAssignmentType.equalsIgnoreCase("exam") &&
+            !newAssignmentType.equalsIgnoreCase("homework") &&
+            !newAssignmentType.equalsIgnoreCase("project")) {
             
             throw new IllegalArgumentException(
                 "Please enter a valid Assignment type. "
@@ -372,7 +456,7 @@ public class AssignmentManager{
      *              
      * @return Returns assignment data in the form "name, course"
      */
-    public String getAssignmentData(Object assignment) 
+    public ArrayList<Object> getAssignmentData(Object assignment) 
         throws IllegalArgumentException{
         if (assignment == null) {
             throw new IllegalArgumentException("Cannot get data of null"
@@ -384,8 +468,17 @@ public class AssignmentManager{
         }
         
         Assignment cast = (Assignment)assignment;
+        ArrayList<Object> assignmentData = new ArrayList<>();
+        //Name, type, points, score, dueDate, courseCode
+        assignmentData.add(cast.getName());
+        assignmentData.add(cast.getType());
+        assignmentData.add(cast.getPoints());
+        assignmentData.add(cast.getScore());
+        assignmentData.add(cast.getDueDate());
+        assignmentData.add(cast.getCourseCode());
+        return assignmentData;
         
-        return cast.getName() + ", " + cast.getCourseCode();
+        
     }
     
     /**

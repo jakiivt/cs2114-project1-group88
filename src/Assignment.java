@@ -1,13 +1,14 @@
+package classFlow;
 import java.time.LocalDate;
 
 public class Assignment
 {
-    private String name;
-    private double points;
-    private LocalDate dueDate;
-    private String type;
-    private String courseCode;
-    private double score;
+    String name;
+    double points;
+    LocalDate dueDate;
+    String assignmentType;
+    String courseCode;
+    double score;
     
     public Assignment(String name, double points, double score, LocalDate dueDate, 
         String type, String courseCode)
@@ -39,7 +40,7 @@ public class Assignment
             this.points = points;
             this.score = score;
             this.dueDate = dueDate;
-            this.type = type;
+            this.assignmentType = type;
             this.courseCode = courseCode;
     }
     
@@ -60,7 +61,7 @@ public class Assignment
 
     public String getType()
     {
-        return type;
+        return assignmentType;
     }
     
     public String getCourseCode()
@@ -71,6 +72,16 @@ public class Assignment
     public double getScore()
     {
         return score;
+    }
+    
+    /*
+     * Sets a new course code attribute. Called by AssignmentManager class in 
+     * the setCourseCode method
+     * @param newCourseCode
+     *                      course code to replace the old one.
+     */
+    public void setNewCourseCode(String newCourseCode) {
+        this.courseCode = newCourseCode;
     }
 
 }
