@@ -101,7 +101,9 @@ public class ClassFlowUI
     /*
      * All of these setter inputs will input course code and assignment name
      * to find correct assignment reference before passing data to Assignment
-     * Manager
+     * Manager. Searches by using taking user input course code to find course
+     * object and then user inputs an assignment name to identify an assignment
+     * in said course using the assignmentTracker Hashmap.
      */
         
     /*
